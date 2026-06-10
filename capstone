@@ -355,7 +355,7 @@
 <script>
   // ---- Product catalogue ----
   const products = [
-    { id: 1, name: "Cordless Drill 18V", meta: "2.0Ah battery + charger", price: 129.00, unit: "each", emoji: "🔩" },
+    { id: 1, name: "Bolt", price: 12.00, unit: "each", emoji: "🔩" },
     { id: 2, name: "Claw Hammer 450g", meta: "Fibreglass handle", price: 24.95, unit: "each", emoji: "🔨" },
     { id: 3, name: "Interior Paint 4L", meta: "Low-sheen, white", price: 58.00, unit: "tin", emoji: "🪣" },
     { id: 4, name: "Pine Timber 2.4m", meta: "90 x 45mm treated", price: 12.40, unit: "length", emoji: "🪵" },
