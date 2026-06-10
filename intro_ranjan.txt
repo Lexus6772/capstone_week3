@@ -1,0 +1,3 @@
+My name is Ranjan Shrestha.
+I am working as a team member in the Secure Retail System project.
+My role focuses on developing and testing the Shopping Cart module.
