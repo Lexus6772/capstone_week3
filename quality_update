@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shopping Cart – Quantity Update Feature</title>
+<style>
+  :root {
+    --bg: #f7f7f9;
+    --card: #ffffff;
+    --border: #e2e2e7;
+    --text: #1f2430;
+    --muted: #6b7280;
+    --primary: #2f6fed;
+    --primary-dark: #1f4fbf;
+    --danger: #e5484d;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 40px 20px;
+  }
+
+  .cart {
+    max-width: 640px;
+    margin: 0 auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+  }
+
+  .cart h1 {
+    font-size: 1.4rem;
+    margin: 0 0 20px;
+  }
+
+  .cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cart-item:last-of-type {
+    border-bottom: none;
+  }
+
+  .item-info {
+    flex: 1;
+  }
+
+  .item-info .name {
+    font-weight: 600;
+  }
+
+  .item-info .price {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .qty-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .qty-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    border-radius: 6px;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .qty-btn:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+
+  .qty-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: var(--bg);
+    color: var(--text);
+    border-color: var(--border);
+  }
+
+  .qty-value {
+    min-width: 24px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .item-subtotal {
+    min-width: 80px;
+    text-align: right;
+    font-weight: 600;
+  }
+
+  .remove-btn {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+
+  .cart-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    margin-top: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<div class="cart">
+  <h1>Your Shopping Cart</h1>
+  <div id="cart-items"></div>
+
+  <div class="cart-summary">
+    <span>Total</span>
+    <span id="cart-total">$0.00</span>
+  </div>
+</div>
+
+<script>
+  // Sample cart data — replace with your team's real product/cart data
+  let cartItems = [
+    { id: 1, name: "Wireless Mouse",  price: 25.00, quantity: 1, stock: 8 },
+    { id: 2, name: "Mechanical Keyboard", price: 79.99, quantity: 2, stock: 5 },
+    { id: 3, name: "USB-C Hub", price: 34.50, quantity: 1, stock: 3 },
+  ];
+
+  const MIN_QUANTITY = 1;
+
+  function formatCurrency(amount) {
+    return `$${amount.toFixed(2)}`;
+  }
+
+  // Validates quantity stays within [MIN_QUANTITY, stock]
+  function clampQuantity(item, newQuantity) {
+    if (newQuantity < MIN_QUANTITY) return MIN_QUANTITY;
+    if (newQuantity > item.stock) return item.stock;
+    return newQuantity;
+  }
+
+  function updateQuantity(itemId, change) {
+    const item = cartItems.find((i) => i.id === itemId);
+    if (!item) return;
+
+    const requested = item.quantity + change;
+    item.quantity = clampQuantity(item, requested);
+    renderCart();
+  }
+
+  function removeItem(itemId) {
+    cartItems = cartItems.filter((i) => i.id !== itemId);
+    renderCart();
+  }
+
+  function renderCart() {
+    const container = document.getElementById("cart-items");
+    container.innerHTML = "";
+
+    cartItems.forEach((item) => {
+      const subtotal = item.price * item.quantity;
+      const atMin = item.quantity <= MIN_QUANTITY;
+      const atMax = item.quantity >= item.stock;
+
+      const row = document.createElement("div");
+      row.className = "cart-item";
+      row.innerHTML = `
+        <div class="item-info">
+          <div class="name">${item.name}</div>
+          <div class="price">${formatCurrency(item.price)} each</div>
+          <button class="remove-btn" data-id="${item.id}">Remove</button>
+        </div>
+
+        <div class="qty-controls">
+          <button class="qty-btn decrease" data-id="${item.id}" ${atMin ? "disabled" : ""}>−</button>
+          <span class="qty-value">${item.quantity}</span>
+          <button class="qty-btn increase" data-id="${item.id}" ${atMax ? "disabled" : ""}>+</button>
+        </div>
+
+        <div class="item-subtotal">${formatCurrency(subtotal)}</div>
+      `;
+
+      container.appendChild(row);
+    });
+
+    container.querySelectorAll(".increase").forEach((btn) => {
+      btn.addEventListener("click", () => updateQuantity(Number(btn.dataset.id), 1));
+    });
+    container.querySelectorAll(".decrease").forEach((btn) => {
+      btn.addEventListener("click", () => updateQuantity(Number(btn.dataset.id), -1));
+    });
+    container.querySelectorAll(".remove-btn").forEach((btn) => {
+      btn.addEventListener("click", () => removeItem(Number(btn.dataset.id)));
+    });
+
+    updateCartTotal();
+  }
+
+  function updateCartTotal() {
+    const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    document.getElementById("cart-total").textContent = formatCurrency(total);
+  }
+
+  renderCart();
+</script>
+
+</body>
+</html>
