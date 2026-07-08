@@ -4,55 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Buildmart — Hardware &amp; Home</title>
+<link rel="stylesheet" href="css/style.css">
 <style>
-  :root {
-    --ink: #1c2321;
-    --paper: #f6f4ef;
-    --card: #ffffff;
-    --line: #e3ded4;
-    --green: #1f5f4b;
-    --amber: #e08a1e;
-    --amber-dark: #c2761a;
-    --muted: #6b7270;
-    --radius: 10px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: var(--paper);
-    color: var(--ink);
-    line-height: 1.5;
-  }
-
-  /* ---------- Header ---------- */
-  header {
-    background: var(--green);
-    color: #fff;
-    position: sticky;
-    top: 0;
-    z-index: 40;
-  }
-  .bar {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 14px 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .logo {
-    font-weight: 800;
-    font-size: 1.35rem;
-    letter-spacing: -.5px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .logo span { color: var(--amber); }
-  .logo svg { width: 26px; height: 26px; }
-
   .search {
     flex: 1;
     display: flex;
@@ -75,21 +28,6 @@
     padding: 0 18px;
     font-weight: 600;
     cursor: pointer;
-  }
-
-  /* ---------- Layout ---------- */
-  .wrap {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 28px 20px 60px;
-  }
-  .page-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 4px; }
-  .page-sub { color: var(--muted); margin-bottom: 24px; font-size: .95rem; }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 18px;
   }
 
   /* ---------- Product card ---------- */
@@ -146,33 +84,6 @@
     z-index: 80;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  .cart-btn {
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.25);
-    color: #fff;
-    border-radius: 6px;
-    padding: 9px 16px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
-  }
-  .cart-btn:hover { background: rgba(255,255,255,.2); }
-  .cart-count {
-    background: var(--amber);
-    color: #fff;
-    border-radius: 999px;
-    min-width: 22px;
-    height: 22px;
-    padding: 0 6px;
-    font-size: .8rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
 
   /* ---------- Cart drawer ---------- */
   .overlay {
@@ -296,12 +207,18 @@
 </head>
 <body>
 
-<header>
+<header class="site-header">
   <div class="bar">
     <div class="logo">
       <svg viewBox="0 0 24 24" fill="none" stroke="#e08a1e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 7l-7 7-3-3"/><path d="M3 21l9-9"/><path d="M14.5 3.5a3 3 0 0 1 4 4l-4-4z"/></svg>
       Build<span>mart</span>
     </div>
+    <nav class="site-nav">
+      <a href="index.html">Home</a>
+      <a href="shop.html" class="active">Shop</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
     <div class="search">
       <input type="text" placeholder="Search tools, paint, timber..." aria-label="Search products">
       <button>Search</button>
@@ -337,6 +254,30 @@
 </aside>
 
 <div class="toast" id="toast"></div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <h4>Buildmart</h4>
+      <p>Hardware &amp; home essentials for every project, big or small.</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <p>support@buildmart.com</p>
+      <p>Mon–Fri: 9am–5pm</p>
+    </div>
+  </div>
+  <div class="footer-bottom">&copy; 2026 Buildmart. Capstone project — Secure Retail System.</div>
+</footer>
 
 <script>
   // ---- Product catalogue ----
