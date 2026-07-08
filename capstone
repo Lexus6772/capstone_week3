@@ -146,6 +146,152 @@
     z-index: 80;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .cart-btn {
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.25);
+    color: #fff;
+    border-radius: 6px;
+    padding: 9px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .cart-btn:hover { background: rgba(255,255,255,.2); }
+  .cart-count {
+    background: var(--amber);
+    color: #fff;
+    border-radius: 999px;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    font-size: .8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ---------- Cart drawer ---------- */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(28,35,33,.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+    z-index: 50;
+  }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+
+  .drawer {
+    position: fixed;
+    top: 0; right: 0;
+    height: 100%;
+    width: 400px;
+    max-width: 92vw;
+    background: var(--paper);
+    z-index: 60;
+    transform: translateX(100%);
+    transition: transform .28s cubic-bezier(.4,0,.2,1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -8px 0 30px rgba(0,0,0,.2);
+  }
+  .drawer.open { transform: translateX(0); }
+
+  .drawer-head {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+  }
+  .drawer-head h2 { font-size: 1.1rem; }
+  .close-x {
+    border: 0; background: transparent; font-size: 1.6rem;
+    cursor: pointer; color: var(--muted); line-height: 1;
+  }
+
+  .cart-items { flex: 1; overflow-y: auto; padding: 12px 16px; }
+
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 60px 20px;
+  }
+  .empty-emoji { font-size: 2.6rem; display: block; margin-bottom: 10px; }
+
+  .cart-item {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .ci-thumb {
+    width: 52px; height: 52px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #f0ede6, #e7e2d8);
+    display: grid; place-items: center;
+    font-size: 1.6rem; flex-shrink: 0;
+  }
+  .ci-info { flex: 1; min-width: 0; }
+  .ci-name { font-weight: 600; font-size: .9rem; }
+  .ci-price { color: var(--muted); font-size: .82rem; }
+  .ci-controls { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+
+  .qty {
+    display: flex; align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .qty button {
+    border: 0; background: #f3f0e9;
+    width: 28px; height: 28px;
+    cursor: pointer; font-size: 1rem;
+    color: var(--ink);
+  }
+  .qty button:hover { background: #e7e2d8; }
+  .qty span { width: 34px; text-align: center; font-size: .9rem; font-weight: 600; }
+
+  .remove {
+    border: 0; background: transparent;
+    color: #b13b3b; font-size: .8rem;
+    cursor: pointer; margin-left: auto;
+  }
+  .remove:hover { text-decoration: underline; }
+  .ci-line-total { font-weight: 700; font-size: .92rem; }
+
+  .drawer-foot {
+    border-top: 1px solid var(--line);
+    background: #fff;
+    padding: 18px 20px;
+  }
+  .sum-row {
+    display: flex; justify-content: space-between;
+    font-size: .9rem; color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .sum-row.total {
+    color: var(--ink); font-weight: 800; font-size: 1.15rem;
+    margin: 10px 0 14px;
+  }
+  .checkout {
+    width: 100%; border: 0;
+    background: var(--green);
+    color: #fff; font-weight: 700;
+    padding: 13px 0; border-radius: 8px;
+    cursor: pointer; font-size: 1rem;
+  }
+  .checkout:hover { background: #184c3b; }
+  .checkout:disabled { background: #b7c0bb; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -160,6 +306,10 @@
       <input type="text" placeholder="Search tools, paint, timber..." aria-label="Search products">
       <button>Search</button>
     </div>
+    <button class="cart-btn" onclick="openCart()">
+      Cart
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
   </div>
 </header>
 
@@ -168,6 +318,23 @@
   <p class="page-sub">Free in-store pickup. Prices include GST.</p>
   <div class="grid" id="grid"></div>
 </main>
+
+<!-- Cart drawer -->
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+<aside class="drawer" id="drawer" aria-label="Shopping cart">
+  <div class="drawer-head">
+    <h2>Your Cart</h2>
+    <button class="close-x" onclick="closeCart()" aria-label="Close cart">&times;</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="drawer-foot">
+    <div class="sum-row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+    <div class="sum-row"><span>GST included (10%)</span><span id="gst">$0.00</span></div>
+    <div class="sum-row"><span>Delivery</span><span id="delivery">Free pickup</span></div>
+    <div class="sum-row total"><span>Total</span><span id="total">$0.00</span></div>
+    <button class="checkout" id="checkoutBtn" onclick="checkout()" disabled>Checkout</button>
+  </div>
+</aside>
 
 <div class="toast" id="toast"></div>
 
@@ -208,8 +375,89 @@
 
   function addToCart(id) {
     cart[id] = (cart[id] || 0) + 1;
+    renderCart();
     const p = products.find(x => x.id === id);
     showToast(`Added "${p.name}" to cart`);
+  }
+
+  function changeQty(id, delta) {
+    cart[id] = (cart[id] || 0) + delta;
+    if (cart[id] <= 0) delete cart[id];
+    renderCart();
+  }
+
+  function removeItem(id) {
+    delete cart[id];
+    renderCart();
+  }
+
+  // ---- Render cart ----
+  function renderCart() {
+    const ids = Object.keys(cart);
+    const itemsEl = document.getElementById("cartItems");
+    const totalQty = ids.reduce((s, id) => s + cart[id], 0);
+    document.getElementById("cartCount").textContent = totalQty;
+
+    if (ids.length === 0) {
+      itemsEl.innerHTML = `
+        <div class="empty">
+          <span class="empty-emoji">🛒</span>
+          Your cart is empty.<br>Add some gear to get started.
+        </div>`;
+    } else {
+      itemsEl.innerHTML = ids.map(id => {
+        const p = products.find(x => x.id == id);
+        const qty = cart[id];
+        const lineTotal = (p.price * qty).toFixed(2);
+        return `
+          <div class="cart-item">
+            <div class="ci-thumb">${p.emoji}</div>
+            <div class="ci-info">
+              <div class="ci-name">${p.name}</div>
+              <div class="ci-price">$${p.price.toFixed(2)} / ${p.unit}</div>
+              <div class="ci-controls">
+                <div class="qty">
+                  <button onclick="changeQty(${p.id}, -1)" aria-label="Decrease">−</button>
+                  <span>${qty}</span>
+                  <button onclick="changeQty(${p.id}, 1)" aria-label="Increase">+</button>
+                </div>
+                <span class="ci-line-total">$${lineTotal}</span>
+                <button class="remove" onclick="removeItem(${p.id})">Remove</button>
+              </div>
+            </div>
+          </div>`;
+      }).join("");
+    }
+    document.getElementById("checkoutBtn").disabled = ids.length === 0;
+
+    // Totals (prices are GST-inclusive, so back out the GST component)
+    const subtotal = ids.reduce((s, id) => {
+      const p = products.find(x => x.id == id);
+      return s + p.price * cart[id];
+    }, 0);
+    const gst = subtotal - subtotal / 1.1;
+
+    document.getElementById("subtotal").textContent = "$" + subtotal.toFixed(2);
+    document.getElementById("gst").textContent = "$" + gst.toFixed(2);
+    document.getElementById("total").textContent = "$" + subtotal.toFixed(2);
+  }
+
+  function checkout() {
+    const total = document.getElementById("total").textContent;
+    showToast(`Order placed! Total: ${total} 🎉`);
+    cart = {};
+    renderCart();
+    setTimeout(closeCart, 800);
+  }
+
+  // ---- Drawer ----
+  function openCart() {
+    document.getElementById("drawer").classList.add("open");
+    document.getElementById("overlay").classList.add("open");
+  }
+  function closeCart() {
+    document.getElementById("drawer").classList.remove("open");
+    document.getElementById("overlay").classList.remove("open");
   }
 
   let toastTimer;
@@ -222,6 +470,7 @@
   }
 
   renderGrid();
+  renderCart();
 </script>
 </body>
 </html>
