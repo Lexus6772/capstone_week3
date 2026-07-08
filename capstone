@@ -128,6 +128,24 @@
     margin-top: 6px;
   }
   .add-btn:hover { background: var(--amber-dark); }
+  .add-btn:active { transform: scale(.98); }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: .9rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .25s ease;
+    z-index: 80;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -150,6 +168,8 @@
   <p class="page-sub">Free in-store pickup. Prices include GST.</p>
   <div class="grid" id="grid"></div>
 </main>
+
+<div class="toast" id="toast"></div>
 
 <script>
   // ---- Product catalogue ----
@@ -176,10 +196,29 @@
             <span class="price">$${p.price.toFixed(2)}</span>
             <span class="price-unit">/ ${p.unit}</span>
           </div>
-          <button class="add-btn">Add to cart</button>
+          <button class="add-btn" onclick="addToCart(${p.id})">Add to cart</button>
         </div>
       </div>
     `).join("");
+  }
+
+  // ---- Cart state ----
+  // cart = { productId: quantity }
+  let cart = {};
+
+  function addToCart(id) {
+    cart[id] = (cart[id] || 0) + 1;
+    const p = products.find(x => x.id === id);
+    showToast(`Added "${p.name}" to cart`);
+  }
+
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 1800);
   }
 
   renderGrid();
