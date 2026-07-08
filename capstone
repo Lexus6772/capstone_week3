@@ -244,6 +244,30 @@
   .ci-info { flex: 1; min-width: 0; }
   .ci-name { font-weight: 600; font-size: .9rem; }
   .ci-price { color: var(--muted); font-size: .82rem; }
+  .ci-controls { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+
+  .qty {
+    display: flex; align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .qty button {
+    border: 0; background: #f3f0e9;
+    width: 28px; height: 28px;
+    cursor: pointer; font-size: 1rem;
+    color: var(--ink);
+  }
+  .qty button:hover { background: #e7e2d8; }
+  .qty span { width: 34px; text-align: center; font-size: .9rem; font-weight: 600; }
+
+  .remove {
+    border: 0; background: transparent;
+    color: #b13b3b; font-size: .8rem;
+    cursor: pointer; margin-left: auto;
+  }
+  .remove:hover { text-decoration: underline; }
+  .ci-line-total { font-weight: 700; font-size: .92rem; }
 </style>
 </head>
 <body>
@@ -325,6 +349,17 @@
     showToast(`Added "${p.name}" to cart`);
   }
 
+  function changeQty(id, delta) {
+    cart[id] = (cart[id] || 0) + delta;
+    if (cart[id] <= 0) delete cart[id];
+    renderCart();
+  }
+
+  function removeItem(id) {
+    delete cart[id];
+    renderCart();
+  }
+
   // ---- Render cart ----
   function renderCart() {
     const ids = Object.keys(cart);
@@ -342,12 +377,22 @@
       itemsEl.innerHTML = ids.map(id => {
         const p = products.find(x => x.id == id);
         const qty = cart[id];
+        const lineTotal = (p.price * qty).toFixed(2);
         return `
           <div class="cart-item">
             <div class="ci-thumb">${p.emoji}</div>
             <div class="ci-info">
               <div class="ci-name">${p.name}</div>
-              <div class="ci-price">$${p.price.toFixed(2)} / ${p.unit} &times; ${qty}</div>
+              <div class="ci-price">$${p.price.toFixed(2)} / ${p.unit}</div>
+              <div class="ci-controls">
+                <div class="qty">
+                  <button onclick="changeQty(${p.id}, -1)" aria-label="Decrease">−</button>
+                  <span>${qty}</span>
+                  <button onclick="changeQty(${p.id}, 1)" aria-label="Increase">+</button>
+                </div>
+                <span class="ci-line-total">$${lineTotal}</span>
+                <button class="remove" onclick="removeItem(${p.id})">Remove</button>
+              </div>
             </div>
           </div>`;
       }).join("");
