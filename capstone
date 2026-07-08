@@ -469,8 +469,10 @@
     toastTimer = setTimeout(() => t.classList.remove("show"), 1800);
   }
 
+  // ---- Init ----
   renderGrid();
   renderCart();
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeCart(); });
 </script>
 </body>
 </html>
