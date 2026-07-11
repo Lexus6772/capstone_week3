@@ -68,7 +68,7 @@
   .add-btn:hover { background: var(--amber-dark); }
   .add-btn:active { transform: scale(.98); }
 
-  /* ---------- Toast ---------- */
+  /* ---------- Toast section---------- */
   .toast {
     position: fixed;
     bottom: 24px; left: 50%;
@@ -240,7 +240,7 @@
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
 <aside class="drawer" id="drawer" aria-label="Shopping cart">
   <div class="drawer-head">
-    <h2>Your Cart</h2>
+    <h2>Your Cart <span id="cartHeaderCount" style="font-size:.85rem; color: var(--muted); font-weight:400;"></span></h2>
     <button class="close-x" onclick="closeCart()" aria-label="Close cart">&times;</button>
   </div>
   <div class="cart-items" id="cartItems"></div>
@@ -318,7 +318,7 @@
     cart[id] = (cart[id] || 0) + 1;
     renderCart();
     const p = products.find(x => x.id === id);
-    showToast(${p.name} added to cart ✅);
+    showToast(`${p.name} added to cart ✅`);
   }
 
   function changeQty(id, delta) {
@@ -338,12 +338,16 @@
     const itemsEl = document.getElementById("cartItems");
     const totalQty = ids.reduce((s, id) => s + cart[id], 0);
     document.getElementById("cartCount").textContent = totalQty;
+    const headerCount = document.getElementById("cartHeaderCount");
+    if (headerCount) {
+      headerCount.textContent = totalQty > 0 ? `(${totalQty} item${totalQty !== 1 ? 's' : ''})` : '';
+    }
 
     if (ids.length === 0) {
       itemsEl.innerHTML = `
         <div class="empty">
           <span class="empty-emoji">🛒</span>
-          Your cart is empty.<br>Add some gear to get started.
+          Your cart is empty.<br>Add some gear to get started 🧰
         </div>`;
     } else {
       itemsEl.innerHTML = ids.map(id => {
