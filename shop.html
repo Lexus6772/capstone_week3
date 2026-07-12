@@ -376,7 +376,7 @@
       const p = products.find(x => x.id == id);
       return s + p.price * cart[id];
     }, 0);
-    const gst = subtotal - subtotal / 1.1;
+    const gst = Math.round((subtotal - subtotal / 1.1) * 100) / 100;
 
     document.getElementById("subtotal").textContent = "$" + subtotal.toFixed(2);
     document.getElementById("gst").textContent = "$" + gst.toFixed(2);
