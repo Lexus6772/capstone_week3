@@ -15,6 +15,8 @@ Manual test cases run against the Buildmart shopping cart feature before merge.
 | 9 | Subtotal / GST / Total accuracy | Add several items, compare displayed totals to manual calculation | Subtotal equals sum of line totals; GST is 10% backed out of GST-inclusive price | ✅ Pass |
 | 10 | Checkout with items | Add items, click Checkout | Confirmation toast with order total shown, cart empties, drawer closes | ✅ Pass |
 | 11 | Checkout disabled when empty | Open drawer with empty cart | Checkout button is disabled | ✅ Pass |
+| 12 | Add same item twice, then remove once | Add an item, add it again, then click Remove once | Quantity drops by 1, item is not fully removed | ✅ Pass |
+| 13 | Large cart totals | Add 5+ different items, open cart | Subtotal, GST, and Total all match manual calculation | ✅ Pass |
 
 ## Notes
 - Tested in Chrome and Edge at desktop and mobile widths.
